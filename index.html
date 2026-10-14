@@ -4,37 +4,487 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>とうけん</title>
-
-<!-- ホーム画面に追加したときの名前とアイコン -->
 <meta name="apple-mobile-web-app-title" content="とうけん">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="apple-touch-icon.png">
-
-<!-- ホーム画面から開いたときにアプリのように全画面で表示し、上部の時計などを墨色の上に重ねる -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1E1E24">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<script>
+  // ▼ GASをデプロイしたときに表示される「ウェブアプリのURL」（/exec で終わるもの）を貼り付け
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyWxKB5VxttGGxFxQfyC1JrAcpcG4nsY5g5Re08ePTDO8F9Ev4JUTli8ahmggaQ8mjfFA/exec';
+</script>
 <style>
-    html, body { margin: 0; height: 100%; background: #1E1E24; color-scheme: dark; }
-  /* ノッチやホームバーの余白はアプリ側（GASのIndex.html）で取っているので、
-     ここでは余白を付けず、画面いっぱいに表示する */
-  .loading {
-    position: fixed; inset: 0; display: grid; place-items: center;
-    color: #B3A894; font: 500 15px/1.6 "Hiragino Mincho ProN", "Yu Mincho", serif; letter-spacing: .1em;
-  }
-  iframe {
-    position: fixed; inset: 0; display: block; border: 0; width: 100%; height: 100%;
-    background: transparent;
-  }
+/* 背景画像に合わせた配色：墨・金・桜 */
+:root{
+  --ink:#EFE8DE; --sub:#B3A894; --line:rgba(184,154,90,.28); --gold:#C2A25E;
+  --sakura:#F5BACB; --sakura-deep:#E07D9C; --on-sakura:#3E1A28;
+  --glass:rgba(18,18,24,.58); --glass-strong:rgba(20,20,27,.92);
+  --mincho:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic UI",sans-serif;
+  --flower-own:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23F5BACB' stroke='none' stroke-width='0' stroke-linejoin='round'%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%280 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%2872 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28144 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28216 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28288 50 54%29'/%3E%3C/g%3E%3Ccircle cx='50' cy='54' r='13' fill='%23FFFFFF' opacity='.35'/%3E%3C/svg%3E");
+  --flower-none:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23B89A5A' stroke-width='5' stroke-linejoin='round'%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%280 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%2872 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28144 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28216 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28288 50 54%29'/%3E%3C/g%3E%3Cg fill='%2318181E'%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%280 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%2872 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28144 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28216 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28288 50 54%29'/%3E%3C/g%3E%3C/svg%3E");
+  --flower-na:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23B89A5A' stroke-width='5' stroke-linejoin='round' stroke-dasharray='6 6'%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%280 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%2872 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28144 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28216 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28288 50 54%29'/%3E%3C/g%3E%3Cg fill='%2318181E'%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%280 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%2872 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28144 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28216 50 54%29'/%3E%3Cpath d='M50 56 C32 48 25 28 36 13 C41 7 47 9 50 16 C53 9 59 7 64 13 C75 28 68 48 50 56Z' transform='rotate%28288 50 54%29'/%3E%3C/g%3E%3C/svg%3E");
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:#1E1E24}
+body{margin:0;background:transparent;color:var(--ink);font:500 15px/1.6 var(--mincho);padding-bottom:env(safe-area-inset-bottom)}
+button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* 背景：iPhone でも固定表示されるよう専用レイヤーに敷く（画像は同じ場所の bg.png） */
+.bg{position:fixed;inset:0;z-index:-1;background-color:#1E1E24;background-image:url(bg.png);background-size:cover;background-position:center top;pointer-events:none}
+
+header{position:sticky;top:0;z-index:5;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px}
+header .wrap{padding-top:calc(10px + env(safe-area-inset-top));padding-bottom:10px}
+.top{display:flex;align-items:baseline;gap:10px;white-space:nowrap}
+.top>*{flex-shrink:0}
+h1{margin:0;font:700 22px/1.2 var(--mincho);letter-spacing:.12em;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.count{font-size:13px;color:var(--sub)}
+.saving{margin-left:auto;font-size:12px;color:var(--sub);flex-shrink:1;overflow:hidden;text-overflow:ellipsis}
+.reload{border:1px solid var(--line);background:rgba(0,0,0,.25);border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+
+.summary{display:flex;gap:6px;overflow-x:auto;margin:10px -14px 0;padding:2px 14px;scrollbar-width:none}
+.summary::-webkit-scrollbar{display:none}
+.sum{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 4px;font-size:12px;color:var(--sub);cursor:pointer}
+.sum b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.sum[aria-pressed="true"]{border-color:var(--sakura);box-shadow:inset 0 0 0 1px var(--sakura)}
+.sum .st{width:26px;height:26px;font-size:11px;pointer-events:none;transform:none}
+
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.controls input{grid-column:1/-1}
+@media (min-width:700px){.controls{grid-template-columns:1fr 120px 100px 170px}.controls input{grid-column:auto}}
+input,select{font:inherit;font-size:16px;width:100%;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:rgba(0,0,0,.35);color:var(--ink);-webkit-appearance:none;appearance:none}
+input::placeholder{color:var(--sub)}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:24px}
+option{background:#1E1E24;color:var(--ink);font-family:var(--mincho)}
+
+ul{list-style:none;margin:0;padding:0}
+/* 一覧は半透明。ぼかしは一覧全体に1回だけかけて iPhone でも軽くする */
+.list{background:var(--glass);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.meta{flex:1;min-width:0;text-align:left;background:none;border:0;padding:2px 0;cursor:pointer}
+.name{display:block;font:600 16px/1.35 var(--mincho);overflow-wrap:anywhere}
+.kiwame{display:inline-block;margin-left:6px;padding:2px 3px;border:1px solid var(--gold);border-radius:3px;color:var(--gold);font:700 11px/1 var(--mincho);vertical-align:2px}
+.sub{display:block;font-size:12px;color:var(--sub)}
+@media (min-width:700px){.list{margin-top:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.row:last-child{border-bottom:0}}
+
+/* 印：所持は桜、未所持は金の輪郭、未実装は破線の輪郭 */
+.stamps{display:flex;gap:2px;flex:0 0 auto}
+.st{width:33px;height:33px;display:grid;place-items:center;padding:3px 0 0;border:0;background:var(--flower-none) center/contain no-repeat;color:var(--sub);font:700 13px/1 var(--mincho);cursor:pointer;transition:transform .2s ease}
+.st.own{background-image:var(--flower-own);color:var(--on-sakura);transform:rotate(-8deg)}
+.st.own:nth-child(even){transform:rotate(10deg)}
+.st.own:active{transform:scale(.9)}
+.st.na{background-image:var(--flower-na);opacity:.45}
+.st.other{color:var(--gold)}
+.st.off{opacity:.22;cursor:not-allowed;color:var(--sub)}
+@media (prefers-reduced-motion:reduce){.st{transition:none}}
+@media (max-width:360px){.st{width:29px;height:29px;font-size:11px}.stamps{gap:1px}}
+
+.empty{padding:40px 14px;text-align:center;color:var(--sub)}
+.empty button{margin-top:10px}
+
+.overlay{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;justify-content:center;background:rgba(5,5,8,.55)}
+.overlay.open{display:flex}
+.sheet{width:100%;max-width:560px;max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--glass-strong);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
+@media (min-width:700px){.overlay{align-items:center}.sheet{border-radius:12px;border-bottom:1px solid var(--line)}}
+.sheet-head{display:flex;align-items:flex-start;gap:10px}
+.sheet-head h2{margin:0;font:700 20px/1.35 var(--mincho)}
+.close{margin-left:auto;border:1px solid var(--line);background:none;border-radius:6px;padding:4px 12px;font-size:14px;cursor:pointer}
+.field{margin-top:16px}
+.field h3{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--gold)}
+.field .note{margin-left:8px;font-weight:500;color:var(--sub)}
+.field.off .seg button,.field.off .chips button{opacity:.35;cursor:not-allowed}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 0;min-width:70px;padding:8px 6px;border:1px solid var(--line);border-radius:7px;background:none;font-size:14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:rgba(194,162,94,.18);border-color:var(--gold);color:var(--ink)}
+.seg button.own[aria-pressed="true"]{background:var(--sakura);border-color:var(--sakura);color:var(--on-sakura);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:none;font-size:13px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--sakura);border-color:var(--sakura);color:var(--on-sakura);font-weight:600}
+
+.overlay.ask{z-index:25;align-items:center;padding:16px}
+.ask-card{width:100%;max-width:400px;background:var(--glass-strong);border:1px solid var(--line);border-radius:12px;padding:18px 16px 14px}
+.ask-card h2{margin:0;font:700 17px/1.4 var(--mincho)}
+.ask-card p{margin:8px 0 14px;font-size:14px;color:var(--sub)}
+.ask-card input{margin-bottom:12px}
+.ask-card .err{color:var(--sakura);font-size:13px;margin:-4px 0 10px}
+.ask-btns{display:flex;gap:8px;justify-content:flex-end}
+.ask-btns button{padding:8px 14px;border:1px solid var(--line);border-radius:7px;background:none;cursor:pointer}
+.ask-btns .ok{border-color:var(--gold);background:rgba(194,162,94,.18)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;max-width:92vw;padding:10px 14px;border-radius:8px;background:var(--glass-strong);border:1px solid var(--line);color:var(--ink);font-size:14px;display:none}
+.toast.show{display:block}
 </style>
 </head>
 <body>
-<!-- 読み込みが終わるまでの表示（アプリが表示されると隠れます） -->
-<div class="loading" aria-hidden="true">読み込み中…</div>
+<div class="bg" aria-hidden="true"></div>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <h1>とうけん</h1>
+      <span class="count" id="count"></span>
+      <span class="saving" id="saving" aria-live="polite"></span>
+      <button class="reload" id="reload">再読み込み</button>
+    </div>
+    <div class="summary" id="summary"></div>
+    <div class="controls">
+      <input id="q" type="search" placeholder="銘・刀帳番号で探す" autocomplete="off">
+      <select id="type" aria-label="刀種"></select>
+      <select id="kiwame" aria-label="修行"></select>
+      <select id="state" aria-label="収集状況"></select>
+    </div>
+  </div>
+</header>
 
-<!-- ▼ GASのウェブアプリURL（/exec で終わるもの）に書き換える -->
-<iframe src="https://script.google.com/macros/s/AKfycbyWxKB5VxttGGxFxQfyC1JrAcpcG4nsY5g5Re08ePTDO8F9Ev4JUTli8ahmggaQ8mjfFA/exec" title="とうけん"></iframe>
+<main class="wrap" style="padding:0">
+  <ul class="list" id="list"><li class="empty">読み込み中…</li></ul>
+</main>
+
+<div class="overlay" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="overlay ask" id="ask"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const S = { items: [], byRow: {}, masters: {}, columns: [], sogen: null };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const errMsg = e => (e && e.message) ? e.message : String(e);
+const toHira = s => s.replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+
+/* ---- 合言葉（この端末のブラウザにだけ保存） ---- */
+const TOKEN_KEY = 'touken_token';
+function getToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; } }
+function setToken(t) { try { localStorage.setItem(TOKEN_KEY, t); } catch (e) {} }
+class AuthError extends Error {}
+
+// GAS の関数を呼び出す（以前の google.script.run と同じ使い方）
+async function call(fn, ...args) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    // text/plain にすることで、GAS 側でエラーになりやすい事前確認（プリフライト）を避ける
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ token: getToken(), fn, args })
+  });
+  const d = await res.json();
+  if (!d.ok) {
+    if (d.error === 'unauthorized') throw new AuthError('合言葉が違います');
+    throw new Error(d.message || d.error);
+  }
+  return d.data;
+}
+
+// 合言葉の入力ダイアログ
+function askToken(message) {
+  return new Promise(resolve => {
+    const box = $('#ask');
+    box.innerHTML = `<div class="ask-card" role="dialog" aria-modal="true" aria-labelledby="tk-t">
+      <h2 id="tk-t">合言葉を入力</h2>
+      <p>GASで作成した合言葉を入力してください。この端末のブラウザにだけ保存されます。</p>
+      <input id="tk-in" type="password" autocomplete="off" aria-label="合言葉">
+      ${message ? `<div class="err">${esc(message)}</div>` : ''}
+      <div class="ask-btns"><button class="ok" id="tk-ok">保存</button></div></div>`;
+    box.classList.add('open');
+    const input = $('#tk-in');
+    input.focus();
+    const done = () => {
+      const t = input.value.trim(); if (!t) return;
+      setToken(t);
+      box.classList.remove('open'); box.onclick = null;
+      resolve();
+    };
+    $('#tk-ok').onclick = done;
+    input.onkeydown = e => { if (e.key === 'Enter') done(); };
+    box.onclick = null; // 外側をタップしても閉じない
+  });
+}
+
+/* ---- マスタ ---- */
+function opts(key) {
+  const m = S.masters[key];
+  return m && m.length ? m : [{ code: 0, label: '所持' }, { code: 1, label: '未所持' }];
+}
+function label(key, code) {
+  if (code == null) return '未入力';
+  const m = opts(key).find(x => x.code === code);
+  return m ? m.label : String(code);
+}
+function kind(key, code) {
+  const l = label(key, code);
+  return l === '所持' ? 'own' : l === '未所持' ? 'none' : l === '未実装' ? 'na' : 'other';
+}
+// 所持していない刀剣は、所持以外の項目を非活性（off）として扱う
+const OWN_KEY = '所持flg';
+function isOwned(it) { return kind(OWN_KEY, it.status[OWN_KEY]) === 'own'; }
+function effKind(it, key) {
+  const k = kind(key, it.status[key]);
+  if (key === OWN_KEY || isOwned(it)) return k;
+  return k === 'na' ? 'na' : 'off';
+}
+const isMissing = kd => kd === 'none' || kd === 'off';
+function codeOf(key, lbl, fallback) {
+  const m = opts(key).find(x => x.label === lbl);
+  return m ? m.code : fallback;
+}
+
+/* ---- 読み込み ---- */
+async function load() {
+  if (!getToken()) await askToken();
+  $('#list').innerHTML = '<li class="empty">読み込み中…</li>';
+  try {
+    const d = await call('getData');
+    Object.assign(S, d);
+    S.byRow = {};
+    S.items.forEach(it => S.byRow[it.row] = it);
+    if (!S.sogen) S.sogen = null;
+    buildFilters();
+    render();
+    if (cur) { cur = S.byRow[cur.row] || null; cur ? renderSheet() : closeSheet(); }
+  } catch (e) {
+    if (e instanceof AuthError) { await askToken('合言葉が違います。もう一度入力してください。'); return load(); }
+    $('#list').innerHTML = `<li class="empty">読み込めませんでした：${esc(errMsg(e))}<br><button class="reload" onclick="load()">もう一度読み込む</button></li>`;
+  }
+}
+
+function fillSelect(el, list) {
+  const keep = el.value;
+  el.innerHTML = list.map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join('');
+  if (list.some(([v]) => v === keep)) el.value = keep;
+}
+function buildFilters() {
+  fillSelect($('#type'), [['', '全刀種']].concat((S.masters['刀種'] || []).map(m => [String(m.code), m.label])));
+  fillSelect($('#kiwame'), [['', '初・極']].concat((S.masters['修行flg'] || []).map(m => [String(m.code), m.label])));
+  fillSelect($('#state'), [['', '全状況'], ['missing', '未所持のある刀剣']]
+    .concat(S.columns.map(c => ['missing:' + c.key, c.label + 'が未所持'])));
+}
+
+/* ---- 絞り込み・描画 ---- */
+function filtered() {
+  const q = toHira($('#q').value.trim());
+  const t = $('#type').value, k = $('#kiwame').value, f = $('#state').value;
+  return S.items.filter(it => {
+    if (q && !(toHira(it.name).includes(q) || String(it.touken) === q.replace(/番$/, ''))) return false;
+    if (t !== '' && it.type !== Number(t)) return false;
+    if (k !== '' && it.kiwame !== Number(k)) return false;
+    if (f === 'missing') return S.columns.some(c => isMissing(effKind(it, c.key)));
+    if (f.startsWith('missing:')) { const key = f.slice(8); return isMissing(effKind(it, key)); }
+    return true;
+  });
+}
+
+function stampsHTML(it) {
+  return S.columns.map(c => {
+    const kd = effKind(it, c.key);
+    const l = kd === 'off' ? '所持していないため選べません' : label(c.key, it.status[c.key]);
+    return `<button class="st ${kd}" data-key="${esc(c.key)}" aria-label="${esc(c.label)}：${esc(l)}" title="${esc(c.label)}：${esc(l)}"${kd === 'off' ? ' disabled' : ''}>${esc(c.short)}</button>`;
+  }).join('');
+}
+function rowHTML(it) {
+  const isKiwame = label('修行flg', it.kiwame) === '極';
+  return `<li class="row" data-row="${it.row}">
+    <button class="meta" data-open>
+      <span class="name">${esc(it.name)}${isKiwame ? '<span class="kiwame">極</span>' : ''}</span>
+      <span class="sub">${esc(label('刀種', it.type))}　${esc(it.touken)}番</span>
+    </button>
+    <div class="stamps">${stampsHTML(it)}</div>
+  </li>`;
+}
+
+function render() {
+  const list = filtered();
+  $('#count').textContent = `${list.length} / ${S.items.length}振`;
+  $('#list').innerHTML = list.length ? list.map(rowHTML).join('')
+    : '<li class="empty">条件に合う刀剣はありません。<br><button class="reload" onclick="clearFilters()">絞り込みを解除</button></li>';
+  renderSummary();
+}
+
+function renderSummary() {
+  const f = $('#state').value;
+  $('#summary').innerHTML = S.columns.map(c => {
+    let own = 0, total = 0;
+    S.items.forEach(it => { const kd = effKind(it, c.key); if (kd !== 'na') total++; if (kd === 'own') own++; });
+    return `<button class="sum" data-key="${esc(c.key)}" aria-pressed="${f === 'missing:' + c.key}" title="${esc(c.label)}が未所持の刀剣だけ表示">
+      <span class="st own">${esc(c.short)}</span><span>${esc(c.label)}</span><b>${own}/${total}</b></button>`;
+  }).join('');
+}
+
+function clearFilters() { $('#q').value = ''; $('#type').value = ''; $('#kiwame').value = ''; $('#state').value = ''; render(); }
+
+function refreshItem(it) {
+  const li = document.querySelector(`.row[data-row="${it.row}"]`);
+  if (li) li.querySelector('.stamps').innerHTML = stampsHTML(it);
+  renderSummary();
+  if (cur === it) renderSheet();
+}
+
+/* ---- 保存（同じ項目への連続操作は順番に送る） ---- */
+const chain = {}; let pending = 0;
+function save(id, fn) {
+  pending++; showSaving();
+  chain[id] = (chain[id] || Promise.resolve())
+    .then(fn)
+    .catch(e => { toast('保存できませんでした：' + errMsg(e)); load(); })
+    .finally(() => { pending--; showSaving(); });
+}
+let savedTimer;
+function showSaving() {
+  clearTimeout(savedTimer);
+  $('#saving').textContent = pending ? '保存中…' : '保存済み';
+  if (!pending) savedTimer = setTimeout(() => $('#saving').textContent = '', 1500);
+}
+
+// 保存は刀剣ごとに順番に送る（所持の切り替えと他項目の更新が入れ替わらないように）
+function setStatus(it, key, val) {
+  if (it.status[key] === val) return;
+  if (key === OWN_KEY) return setOwned(it, val);
+  if (!isOwned(it)) return;
+  it.status[key] = val;
+  refreshItem(it);
+  save(it.row, () => call('updateStatus', it.row, it.name, key, val));
+}
+
+// 所持の切り替え。未所持→所持のときは、他の項目を「未所持」から付け直せるように初期化する
+async function setOwned(it, val) {
+  const wasOwned = isOwned(it);
+  const willOwn = kind(OWN_KEY, val) === 'own';
+  if (wasOwned && !willOwn) {
+    const ok = await ask(`${it.name}を「未所持」にしますか？`,
+      'ほかのステータスと蘇言機は選べなくなります。もう一度「所持」にすると、未所持の状態から付け直しになります。', '未所持にする');
+    if (!ok) return;
+  }
+  it.status[OWN_KEY] = val;
+  if (!wasOwned && willOwn) {
+    S.columns.forEach(c => {
+      if (c.key !== OWN_KEY && kind(c.key, it.status[c.key]) !== 'na') it.status[c.key] = codeOf(c.key, '未所持', 1);
+    });
+    if (S.sogen) S.sogen.done[it.no] = [];
+  }
+  refreshItem(it);
+  save(it.row, () => call('setOwned', it.row, it.name, val));
+}
+
+// 確認ダイアログ
+function ask(title, body, okLabel) {
+  return new Promise(resolve => {
+    const box = $('#ask');
+    box.innerHTML = `<div class="ask-card" role="alertdialog" aria-modal="true" aria-labelledby="ask-t">
+      <h2 id="ask-t">${esc(title)}</h2><p>${esc(body)}</p>
+      <div class="ask-btns"><button data-v="0">やめる</button><button data-v="1" class="ok">${esc(okLabel)}</button></div></div>`;
+    box.classList.add('open');
+    box.querySelector('[data-v="0"]').focus();
+    box.onclick = e => {
+      const b = e.target.closest('[data-v]');
+      if (!b && e.target !== box) return;
+      box.classList.remove('open'); box.onclick = null;
+      resolve(!!b && b.dataset.v === '1');
+    };
+  });
+}
+
+function toggleSogen(it, code) {
+  if (!isOwned(it)) return;
+  const done = S.sogen.done;
+  const arr = done[it.no] || (done[it.no] = []);
+  const on = !arr.includes(code);
+  if (on) arr.push(code); else arr.splice(arr.indexOf(code), 1);
+  renderSheet();
+  save(it.row, () => call('setSogen', it.no, it.name, code, on));
+}
+
+/* ---- 詳細シート ---- */
+let cur = null;
+function openSheet(it) {
+  cur = it; renderSheet();
+  $('#ov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  $('#sheet').querySelector('.close').focus();
+}
+function closeSheet() {
+  const row = cur && cur.row;
+  cur = null;
+  $('#ov').classList.remove('open');
+  document.body.style.overflow = '';
+  const btn = row && document.querySelector(`.row[data-row="${row}"] .meta`);
+  if (btn) btn.focus({ preventScroll: true });
+}
+function renderSheet() {
+  const it = cur; if (!it) return;
+  const isKiwame = label('修行flg', it.kiwame) === '極';
+  let h = `<div class="sheet-head"><div>
+      <h2>${esc(it.name)}${isKiwame ? '<span class="kiwame">極</span>' : ''}</h2>
+      <span class="sub">${esc(label('刀種', it.type))}　${esc(it.touken)}番</span>
+    </div><button class="close" data-close>閉じる</button></div>`;
+  const owned = isOwned(it);
+  S.columns.forEach(c => {
+    const off = c.key !== OWN_KEY && !owned;
+    h += `<div class="field${off ? ' off' : ''}"><h3>${esc(c.label)}${off ? '<span class="note">所持すると選べます</span>' : ''}</h3><div class="seg">` +
+      opts(c.key).map(o => `<button data-key="${esc(c.key)}" data-code="${o.code}" class="${kind(c.key, o.code)}" aria-pressed="${!off && it.status[c.key] === o.code}"${off ? ' disabled' : ''}>${esc(o.label)}</button>`).join('') +
+      '</div></div>';
+  });
+  if (S.sogen && S.sogen.list.length) {
+    const got = S.sogen.done[it.no] || [];
+    h += `<div class="field${owned ? '' : ' off'}"><h3>蘇言機（${owned ? got.length : 0}/${S.sogen.list.length}）${owned ? '' : '<span class="note">所持すると選べます</span>'}</h3><div class="chips">` +
+      S.sogen.list.map(s => `<button data-sogen="${s.code}" aria-pressed="${owned && got.includes(s.code)}"${owned ? '' : ' disabled'}>${esc(s.label)}</button>`).join('') +
+      '</div></div>';
+  }
+  const sheet = $('#sheet');
+  const top = sheet.scrollTop;
+  sheet.innerHTML = h;
+  sheet.setAttribute('aria-label', it.name);
+  sheet.scrollTop = top;
+}
+
+/* ---- イベント ---- */
+$('#list').addEventListener('click', e => {
+  const li = e.target.closest('.row'); if (!li) return;
+  const it = S.byRow[li.dataset.row];
+  const st = e.target.closest('.st');
+  if (st) {
+    const key = st.dataset.key, kd = effKind(it, key);
+    if (kd === 'off') return;
+    if (kd === 'own') setStatus(it, key, codeOf(key, '未所持', 1));
+    else if (kd === 'none') setStatus(it, key, codeOf(key, '所持', 0));
+    else openSheet(it); // 未実装・未入力は詳細で選ぶ
+    return;
+  }
+  if (e.target.closest('[data-open]')) openSheet(it);
+});
+
+$('#sheet').addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) return closeSheet();
+  const seg = e.target.closest('[data-code]');
+  if (seg) return setStatus(cur, seg.dataset.key, Number(seg.dataset.code));
+  const sg = e.target.closest('[data-sogen]');
+  if (sg) toggleSogen(cur, Number(sg.dataset.sogen));
+});
+$('#ov').addEventListener('click', e => { if (e.target.id === 'ov') closeSheet(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if ($('#ask').classList.contains('open')) return $('#ask').click();
+  if (cur) closeSheet();
+});
+
+$('#summary').addEventListener('click', e => {
+  const b = e.target.closest('.sum'); if (!b) return;
+  const v = 'missing:' + b.dataset.key;
+  $('#state').value = $('#state').value === v ? '' : v;
+  render();
+});
+['type', 'kiwame', 'state'].forEach(id => $('#' + id).addEventListener('change', render));
+let qTimer; $('#q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(render, 150); });
+$('#reload').addEventListener('click', load);
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+load();
+</script>
 </body>
 </html>
