@@ -17,20 +17,15 @@
 <meta name="theme-color" content="#1E1E24">
 
 <style>
-  html, body { margin: 0; height: 100%; background: #1E1E24; color-scheme: dark; }
-  body {
-    box-sizing: border-box;
-    /* iPhoneのノッチやホームバーに中身が隠れないようにする */
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    position: relative;
-  }
+    html, body { margin: 0; height: 100%; background: #1E1E24; color-scheme: dark; }
+  /* ノッチやホームバーの余白はアプリ側（GASのIndex.html）で取っているので、
+     ここでは余白を付けず、画面いっぱいに表示する */
   .loading {
-    position: absolute; inset: 0; display: grid; place-items: center;
+    position: fixed; inset: 0; display: grid; place-items: center;
     color: #B3A894; font: 500 15px/1.6 "Hiragino Mincho ProN", "Yu Mincho", serif; letter-spacing: .1em;
   }
   iframe {
-    position: relative; display: block; border: 0; width: 100%; height: 100%;
+    position: fixed; inset: 0; display: block; border: 0; width: 100%; height: 100%;
     background: transparent;
   }
 </style>
