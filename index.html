@@ -36,8 +36,9 @@ body{margin:0;background:transparent;color:var(--ink);font:500 15px/1.6 var(--mi
 button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
-/* 背景：iPhone でも固定表示されるよう専用レイヤーに敷く（画像は同じ場所の bg.png） */
-.bg{position:fixed;inset:0;z-index:-1;background-color:#1E1E24;background-image:url(bg.png);background-size:cover;background-position:center top;pointer-events:none}
+/* 背景：iPhone でも固定表示されるよう専用レイヤーに敷く（画像は同じ場所の bg.png）
+   ホーム画面から開いたときにホームバーの手前で切れないよう、下端より少し長くしておく */
+.bg{position:fixed;top:0;left:0;right:0;bottom:-120px;z-index:-1;background-color:#1E1E24;background-image:url(bg.png);background-size:cover;background-position:center top;pointer-events:none}
 
 header{position:sticky;top:0;z-index:5;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .wrap{max-width:860px;margin:0 auto;padding:0 14px}
@@ -385,6 +386,15 @@ function ask(title, body, okLabel) {
   });
 }
 
+// 極の刀剣だけが対象の蘇言機（初の刀剣では表示も集計もしない）
+const SOGEN_KIWAME_ONLY = ['修業帰還', '修行帰還', '極Lv.100極開花達成'];  // 「修業」「修行」どちらの表記でも一致
+const normLabel = s => String(s).normalize('NFKC').replace(/\s/g, '');
+function sogenListFor(it) {
+  if (label('修行flg', it.kiwame) === '極') return S.sogen.list;
+  const hide = SOGEN_KIWAME_ONLY.map(normLabel);
+  return S.sogen.list.filter(s => !hide.includes(normLabel(s.label)));
+}
+
 function toggleSogen(it, code) {
   if (!isOwned(it)) return;
   const done = S.sogen.done;
@@ -426,9 +436,10 @@ function renderSheet() {
       '</div></div>';
   });
   if (S.sogen && S.sogen.list.length) {
-    const got = S.sogen.done[it.no] || [];
-    h += `<div class="field${owned ? '' : ' off'}"><h3>蘇言機（${owned ? got.length : 0}/${S.sogen.list.length}）${owned ? '' : '<span class="note">所持すると選べます</span>'}</h3><div class="chips">` +
-      S.sogen.list.map(s => `<button data-sogen="${s.code}" aria-pressed="${owned && got.includes(s.code)}"${owned ? '' : ' disabled'}>${esc(s.label)}</button>`).join('') +
+    const list = sogenListFor(it);
+    const got = (S.sogen.done[it.no] || []).filter(code => list.some(s => s.code === code));
+    h += `<div class="field${owned ? '' : ' off'}"><h3>蘇言機（${owned ? got.length : 0}/${list.length}）${owned ? '' : '<span class="note">所持すると選べます</span>'}</h3><div class="chips">` +
+      list.map(s => `<button data-sogen="${s.code}" aria-pressed="${owned && got.includes(s.code)}"${owned ? '' : ' disabled'}>${esc(s.label)}</button>`).join('') +
       '</div></div>';
   }
   const sheet = $('#sheet');
