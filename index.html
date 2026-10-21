@@ -38,7 +38,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 
 /* 背景：iPhone でも固定表示されるよう専用レイヤーに敷く（画像は同じ場所の bg.png）
    ホーム画面から開いたときにホームバーの手前で切れないよう、下端より少し長くしておく */
-.bg{position:fixed;top:0;left:0;right:0;bottom:-120px;z-index:-1;background-color:#1E1E24;background-image:url(bg.jpg);background-size:cover;background-position:center top;pointer-events:none}
+.bg{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;;z-index:-1;background-color:#1E1E24;background-image:url(bg.jpg);background-size:cover;background-position:center top;pointer-events:none}
 @media (orientation: portrait){.bg{background-image:url(bg-sp.jpg)}}
   
 header{position:sticky;top:0;z-index:5;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
