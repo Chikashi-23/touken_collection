@@ -31,7 +31,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;background:#1E1E24}
+html{-webkit-text-size-adjust:100%;background:#1E1E24;min-height:calc(100% + env(safe-area-inset-top,0px))}
 body{margin:0;background:transparent;color:var(--ink);font:500 15px/1.6 var(--mincho);padding-bottom:env(safe-area-inset-bottom)}
 button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
